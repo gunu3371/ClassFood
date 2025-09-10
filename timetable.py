@@ -9,8 +9,6 @@ class Comci:
         pass
 
     def search_school(self, school_name):
-        # 학교 검색
-        # [지역코드, 지역명, 학교명, 학교코드] 리스트로 응답
         return get_school_code(school_name)
 
     def get(self, school_name, local_code, school_code, grade, class_, date):

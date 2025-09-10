@@ -24,7 +24,7 @@ app = FastAPI(
 )
 
 
-@app.get("/timetable/get")
+@app.get("/timetable")
 async def get_timetable(code: str, grade: int, class_: int):
     decoded = json.loads(b64decode(code).decode())
     return tt.get(
