@@ -1,13 +1,15 @@
 from fastapi import APIRouter
 from ...service.meal import Neis
-from ...utils.util import * 
+from ...utils.util import *
 from base64 import b64decode
 import json
+
 meal = Neis()
 
 router = APIRouter(prefix="/meal", tags=["meal"])
 
-@router.get("/")
+
+@router.get("")
 async def get_meal(code):
     allergy_map = {
         "1": "난류",
@@ -28,14 +30,12 @@ async def get_meal(code):
         "16": "쇠고기",
         "17": "오징어",
         "18": "조개류(굴, 전복, 홍합 포함)",
-        "19": "잣"
+        "19": "잣",
     }
 
     decoded = json.loads(b64decode(code).decode())
     m = await meal.get(
-        decoded["n_region_code"],
-        decoded["n_school_code"],
-        get_seoul_time()
+        decoded["n_region_code"], decoded["n_school_code"], get_seoul_time()
     )
     diet = {}
 
@@ -54,7 +54,6 @@ async def get_meal(code):
         except IndexError:
             diet[i[0]] = None
             continue
-
 
     origin = {}
 

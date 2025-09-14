@@ -15,8 +15,9 @@ app = FastAPI(
     version="0.0.1",
 )
 
+
 @app.get("/api/search")
-async def search_school(school_name_comci: str, school_name_neis: str = None): # type: ignore
+async def search_school(school_name_comci: str, school_name_neis: str = None):  # type: ignore
     if school_name_neis is None:
         school_name_neis = school_name_comci
 
@@ -29,7 +30,12 @@ async def search_school(school_name_comci: str, school_name_neis: str = None): #
         return "검색범위를 좁혀주세요"
     com = com[0]
 
-    ret = {"comci_region": com[1], "comci_school": com[2], "neis_school": nei.SCHUL_NM, "neis_region": nei.ATPT_OFCDC_SC_NM}
+    ret = {
+        "comci_region": com[1],
+        "comci_school": com[2],
+        "neis_school": nei.SCHUL_NM,
+        "neis_region": nei.ATPT_OFCDC_SC_NM,
+    }
     ret["code"] = b64encode(
         json.dumps(
             {
@@ -44,5 +50,6 @@ async def search_school(school_name_comci: str, school_name_neis: str = None): #
         ).encode()
     ).decode()
     return ret
+
 
 app.include_router(router)
