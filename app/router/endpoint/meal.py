@@ -2,15 +2,19 @@ from fastapi import APIRouter
 from ...service.meal import Neis
 from ...utils.util import *
 from base64 import b64decode
+from pydantic import BaseModel
 import json
 
 meal = Neis()
 
 router = APIRouter(prefix="/meal", tags=["meal"])
 
+class mquery(BaseModel):
+    code: str
+    weekday: int = -1
 
-@router.get("")
-async def get_meal(code):
+@router.post("")
+async def get_meal(query: mquery):
     allergy_map = {
         "1": "난류",
         "2": "우유",
@@ -33,9 +37,9 @@ async def get_meal(code):
         "19": "잣",
     }
 
-    decoded = json.loads(b64decode(code).decode())
+    decoded = json.loads(b64decode(query.code).decode())
     m = await meal.get(
-        decoded["n_region_code"], decoded["n_school_code"], get_seoul_time()
+        decoded["n_region_code"], decoded["n_school_code"], get_weekdays(query.weekday)
     )
     diet = {}
 
