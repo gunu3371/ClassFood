@@ -3,15 +3,18 @@ from ...service.meal import Neis
 from ...utils.util import *
 from base64 import b64decode
 from pydantic import BaseModel
+from ...utils.models import Meal
 import json
 
 meal = Neis()
 
 router = APIRouter(prefix="/meal", tags=["meal"])
 
+
 class mquery(BaseModel):
     code: str
     weekday: int = -1
+
 
 @router.post("")
 async def get_meal(query: mquery):
@@ -38,6 +41,16 @@ async def get_meal(query: mquery):
     }
 
     decoded = json.loads(b64decode(query.code).decode())
+
+    obj = await Meal.get_or_none(
+        date=get_weekdays(query.weekday),
+        region_code=decoded["n_region_code"],
+        school_code=decoded["n_school_code"],
+    )
+
+    if obj is not None:
+        return {"요리명": obj.diet, "원산지": obj.origin, "칼로리": obj.cal, "영양성분": obj.antelope}
+
     m = await meal.get(
         decoded["n_region_code"], decoded["n_school_code"], get_weekdays(query.weekday)
     )
@@ -68,9 +81,36 @@ async def get_meal(query: mquery):
     cal = m.CAL_INFO
 
     antelope = {}
-
     for i in m.NTR_INFO.split("<br/>"):
         i = i.split(" : ")
         antelope[i[0]] = i[1]
-
+    obj, created = await Meal.get_or_create(
+        date=get_weekdays(query.weekday),
+        region_code=decoded["n_region_code"],
+        school_code=decoded["n_school_code"],
+        defaults={
+            "date": get_weekdays(query.weekday),
+            "region_code": decoded["n_region_code"],
+            "school_code": decoded["n_school_code"],
+            "diet": diet,
+            "origin": origin,
+            "cal": cal,
+            "antelope": antelope,
+        },
+    )
+    if not created:
+        await Meal.update_or_create(
+            date=get_weekdays(query.weekday),
+            region_code=decoded["n_region_code"],
+            school_code=decoded["n_school_code"],
+            defaults={
+                "date": get_weekdays(query.weekday),
+                "region_code": decoded["n_region_code"],
+                "school_code": decoded["n_school_code"],
+                "diet": diet,
+                "origin": origin,
+                "cal": cal,
+                "antelope": antelope,
+            },
+        )
     return {"요리명": diet, "원산지": origin, "칼로리": cal, "영양성분": antelope}

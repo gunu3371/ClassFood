@@ -5,6 +5,7 @@ import json
 from app.router import router
 from app.service.timetable import Comci
 from app.service.meal import Neis
+from app.utils.db import init_db
 
 tt = Comci()
 meal = Neis()
@@ -14,6 +15,8 @@ app = FastAPI(
     description="학교 급식 및 시간표 API",
     version="0.0.1",
 )
+
+init_db(app)
 
 
 @app.get("/api/search")
