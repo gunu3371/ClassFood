@@ -17,11 +17,11 @@ app = FastAPI(
 
 
 @app.get("/api/search")
-async def search_school(school_name_comci: str, school_name_neis: str = None):  # type: ignore
+async def search_school(school_name: str, school_name_neis: str = None):  # type: ignore
     if school_name_neis is None:
-        school_name_neis = school_name_comci
+        school_name_neis = school_name
 
-    com = tt.search_school(school_name_comci)
+    com = tt.search_school(school_name)
     nei = await meal.search_school(school_name_neis)
     if len(nei) > 1:
         return "검색범위를 좁혀주세요"
