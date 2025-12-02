@@ -10,3 +10,4 @@ class Meal(Model):
     origin = fields.JSONField()
     cal = fields.CharField(max_length=20)
     antelope = fields.JSONField()
+    last_updated = fields.DatetimeField()

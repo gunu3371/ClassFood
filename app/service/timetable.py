@@ -1,6 +1,5 @@
 from pycomcigan import TimeTable, get_school_code
 from datetime import datetime
-from neispy import Neispy
 from pprint import pprint
 
 

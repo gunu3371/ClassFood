@@ -6,7 +6,7 @@ def get_weekdays(day=-1):
     seoul_time = datetime.now(timezone("Asia/Seoul"))
     today = seoul_time.date()
 
-    if day is -1:
+    if day == -1:
         return today
 
     target_weekday = day
